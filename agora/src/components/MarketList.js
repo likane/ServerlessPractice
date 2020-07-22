@@ -8,7 +8,7 @@ import Error from './Error'
 import {Link} from 'react-router-dom'
 import MarketPage from "../pages/MarketPage";
 
-const MarketList = () => {
+const MarketList = ({searchResults}) => {
   const onNewMarket = (prevQuery, newData) => {
     let updatedQuery = {...prevQuery};
     const updatedMarketList = [
@@ -25,24 +25,35 @@ const MarketList = () => {
       onSubscriptionMsg={onNewMarket}
     >
       {({data, loading, errors }) => {
+
         if (errors.length > 0) return <Error errors={errors} />
         if (loading || !data.listMarkets) return <Loading fullscreen={true} />
+        //const markets = searchResults.length > 0 ? searchResults : data.listMarkets.items;
+        const markets =  data.listMarkets.items;
         return(
           <>
-          <h2 className="header">
+           {/* {searchResults.length > 0 ? ( */}
+          {searchResults ? (
+         
+              <h2 className="text-green">
+                  <Icon type="success" name="check" className="icon" />
+                  {/* {searchResults.length} */}
+                   Results
+              </h2>
+          ) : (<h2 className="header">
             <img src="https://icon.now.sh/store_mall_directory/527FFF" alt="Store Icon" className="large-icon" />
             Markets
-          </h2>
-            {data.listMarkets.items.map(market => (
+          </h2>)}
+            {/* {markets.items.map(market => (
               <div key={market.id} className="my-2">
                 <Card
                   bodyStyle={{
-                    padding: "0.7em",
+                    padding: "0.7em", 
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between'
-                  }}
-                  >
+                  }} 
+                  >*/}
                       <div>
                         <span className="flex">
                             <Link className="link" to={`/markets/${market.id}`}>
