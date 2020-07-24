@@ -1,6 +1,6 @@
 import React from "react";
 import {Connect} from 'aws-amplify-react'
-import { Loading, Card, Icon, Tag } from "element-react";
+import {Loading, Card, Icon, Tag } from "element-react";
 import {graphqlOperation} from 'aws-amplify'
 import {listMarkets} from '../graphql/queries'
 import {onCreateMarket} from '../graphql/subscriptions'
@@ -18,6 +18,7 @@ const MarketList = ({searchResults}) => {
     updatedQuery.listMarkets.item = updatedMarketList;
     return updatedQuery;
   }
+
   return (
     <Connect
       query={graphqlOperation(listMarkets)}
@@ -28,23 +29,25 @@ const MarketList = ({searchResults}) => {
 
         if (errors.length > 0) return <Error errors={errors} />
         if (loading || !data.listMarkets) return <Loading fullscreen={true} />
-        //const markets = searchResults.length > 0 ? searchResults : data.listMarkets.items;
-        const markets =  data.listMarkets.items;
+        const markets = searchResults.length > 0 ? searchResults : data.listMarkets.items;
+        
         return(
           <>
-           {/* {searchResults.length > 0 ? ( */}
-          {searchResults ? (
-         
+           {searchResults.length > 0 ? (
               <h2 className="text-green">
                   <Icon type="success" name="check" className="icon" />
-                  {/* {searchResults.length} */}
+                  {searchResults.length}
                    Results
               </h2>
-          ) : (<h2 className="header">
-            <img src="https://icon.now.sh/store_mall_directory/527FFF" alt="Store Icon" className="large-icon" />
-            Markets
-          </h2>)}
-            {/* {markets.items.map(market => (
+          ) : (
+            <h2 className="header">
+              {/* <img src="https://icon.now.sh/store_mall_directory/527FFF" alt="Store Icon" className="large-icon" /> */}
+              Markets
+            </h2>
+            )
+          }
+
+            {markets.items.map(market => (
               <div key={market.id} className="my-2">
                 <Card
                   bodyStyle={{
@@ -53,14 +56,14 @@ const MarketList = ({searchResults}) => {
                     alignItems: 'center',
                     justifyContent: 'space-between'
                   }} 
-                  >*/}
+                  >
                       <div>
                         <span className="flex">
                             <Link className="link" to={`/markets/${market.id}`}>
                               {market.name}
                             </Link>
                             <span style={{color: 'var(--darkAmazonOrange'}}>
-                              {/* {market.products.items.length} */}
+                              {market.products.items.length}
                             </span>
                             <img src="https://icon.now.sh/shopping_cart/f60" alt="Shopping Cart" />
                         </span>
@@ -77,7 +80,8 @@ const MarketList = ({searchResults}) => {
                       </div>
                 </Card>
               </div>
-            ))}
+            )
+            )}
           </>
         )
       }}

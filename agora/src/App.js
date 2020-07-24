@@ -1,20 +1,19 @@
 import React from "react";
 import "./App.css";
 import {BrowserRouter as Router, Route} from 'react-router-dom';
-import { API, graphqlOperation, Amplify, Auth, Hub } from 'aws-amplify';
-import { AmplifyTheme, Authenticator, SignOut } from 'aws-amplify-react';
-import { AmplifySignOut, Greetings} from '@aws-amplify/ui-react';
+import {getUser} from './graphql/queries'
+import {  API, graphqlOperation, Auth, Hub } from 'aws-amplify';
+import { AmplifyTheme, Authenticator } from 'aws-amplify-react';
+//import { AmplifySignOut, Greetings} from '@aws-amplify/ui-react';
 
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import MarketPage from  './pages/MarketPage';
-
-
-
 import Navbar from  './components/Navbar';
 
 
 import awsconfig from './aws-exports';
+import { registerUser } from "./graphql/mutations";
 
 export const UserContext = React.createContext()
 
@@ -43,6 +42,7 @@ class App extends React.Component {
         break;
       case "signUp":
         console.log('signed up')
+        this.registerNewUser(capsule.payload.data)
         break;
       case "signOut":
         console.log('signed Out')
@@ -50,6 +50,26 @@ class App extends React.Component {
         break;
       default:
         return;
+    }
+  }
+
+  registerNewUser = async signInData => {
+    const getUserInput = {
+      id: signInData.signInUserSession.idToken.payload.sub
+    }
+    const {data} = await API.graphql(graphqlOperation(getUser, getUserInput))
+    if(!data.getUser){
+      try {
+        const registerUserInput = {
+          ...getUserInput,
+          username: signInData.username,
+          email: signInData.signInUserSession.idToken.payload.email,
+          registered: true
+        }
+        const newUser = await API.graphql(graphqlOperation(registerUser, {input: registerUserInput}))
+      } catch (error) {
+        console.error("Error registering new user", err)
+      }
     }
   }
 
@@ -73,7 +93,7 @@ class App extends React.Component {
         {/* <AmplifySignOut /> */}
             <Route exact path="/" component={HomePage} />
             <Route exact path="/profile" component={ProfilePage} />
-            <Route exact path="/markets/:marketId" component={({match}) => <MarketPage marketId={match.params.marketId}/>} />
+            <Route exact path="/markets/:marketId" component={({match}) => <MarketPage user={user} marketId={match.params.marketId}/>} />
         </div>
       </>
       </Router>

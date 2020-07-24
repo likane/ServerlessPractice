@@ -27,7 +27,7 @@ class NewMarket extends React.Component {
       console.log({result});
       const result = await API.graphql(graphqlOperation(createMarket, {input}))
       console.info(`Created market: id ${result.data.createMarket.id}`);
-      this.setState({name: " ", selectedTags: []})
+      this.setState({name: "", selectedTags: []})
     } catch (err) {
       console.error('Error adding new market', err)
       Notification.error({
@@ -49,7 +49,7 @@ class NewMarket extends React.Component {
     return (
       <UserContext.Consumer>
 
-   {({user}) => <>
+   {({user}) => (<>
       <div className="market-header">
         <h1 className="market-title">
           Create Your MarketPlace
@@ -119,7 +119,7 @@ class NewMarket extends React.Component {
         </Dialog.Footer>
       </Dialog>
      
-    </>}
+    </>)}
     </UserContext.Consumer>
       )
   }

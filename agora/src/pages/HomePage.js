@@ -9,18 +9,18 @@ import {searchMarkets} from '../graphql/queries';
 class HomePage extends React.Component {
   state = {
     searchTerm: "",
-    serchResults: [],
+    searchResults: [],
     isSearching: false
   };
 
   handleSearchChange = searchTerm => this.setState({ searchTerm })
 
-  handleClearSearch = () => this.setState({searchTerm: "", searchResults: [] })
+  handleClearSearch = () => this.setState({searchTerm: "", searchResults: [] });
 
   handleSearch = async (event) => {
     try {
       event.preventDefault()
-      console.log(this.state.searchTerm)
+      //console.log(this.state.searchTerm)
       this.setState({isSearching: true})
       const result = await API.graphql(graphqlOperation(searchMarkets, {
         filter:{
@@ -35,8 +35,8 @@ class HomePage extends React.Component {
           direction: "desc"
         }
       }))
-      console.log({result});
-      this.setState({ searchMarkets: result.data.searchMarkets.items,
+      //console.log({result});
+      this.setState({ searchResults: result.data.searchMarkets.items,
         isSearching: false
       })
     } catch (error) {
